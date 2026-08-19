@@ -458,10 +458,15 @@
     // scale factor between tray render (22px) and board cell (CELL)
     const scale = CELL/22;
 
+    // On touch, lift the piece well above the finger so it isn't hidden underneath.
+    // Mouse users can already see the cursor, so no lift needed there.
+    const lift = (e.pointerType === 'touch') ? CELL*2.6 : 0;
+
     drag = {
       index, shape,
       grabOffsetX: (e.clientX - gridRect.left)*scale,
       grabOffsetY: (e.clientY - gridRect.top)*scale,
+      lift,
       boardRect: boardEl.getBoundingClientRect(),
       lastRow: null, lastCol: null, lastValid:false,
       pendingX: e.clientX, pendingY: e.clientY,
@@ -479,7 +484,7 @@
   }
 
   function positionGhost(x,y){
-    ghostEl.style.transform = `translate3d(${x - drag.grabOffsetX}px, ${y - drag.grabOffsetY}px, 0)`;
+    ghostEl.style.transform = `translate3d(${x - drag.grabOffsetX}px, ${y - drag.grabOffsetY - drag.lift}px, 0)`;
   }
 
   function onDragMove(e){
@@ -499,7 +504,7 @@
     positionGhost(x,y);
 
     const colStart = Math.round((x - drag.grabOffsetX - drag.boardRect.left)/CELL);
-    const rowStart = Math.round((y - drag.grabOffsetY - drag.boardRect.top)/CELL);
+    const rowStart = Math.round((y - drag.grabOffsetY - drag.lift - drag.boardRect.top)/CELL);
 
     if(rowStart===drag.lastRow && colStart===drag.lastCol) return; // same cell as last frame — nothing to recompute
 
