@@ -176,7 +176,7 @@
   </div>
 
   <div id="status">Drag a piece onto the grid</div>
-  <div id="revline">rev: 2026-08-19 02:26 PM EDT</div>
+  <div id="revline">rev: 2026-08-19 02:36 PM EDT</div>
 </div>
 
 <div id="ghost"></div>
@@ -358,6 +358,17 @@
     renderBoard();
 
     if(cellsToClear.size>0){
+      // will this clear leave the entire board empty?
+      let boardWillBeEmpty = true;
+      for(let r=0;r<BOARD_N && boardWillBeEmpty;r++){
+        for(let c=0;c<BOARD_N;c++){
+          if(board[r][c] && !cellsToClear.has(r+','+c)){
+            boardWillBeEmpty = false;
+            break;
+          }
+        }
+      }
+
       cellsToClear.forEach(key=>{
         const [r,c] = key.split(',').map(Number);
         boardCellEls[r][c].classList.add('clearing');
@@ -365,8 +376,12 @@
       score += cellsToClear.size;
       let statusMsg = cellsToClear.size+' blocks cleared';
       if(cellsToClear.size>=40){
-        score += 100;
-        statusMsg += ' • +100 bonus!';
+        score += 123;
+        statusMsg += ' • +123 bonus!';
+      }
+      if(boardWillBeEmpty){
+        score += 123;
+        statusMsg += ' • Board Clear! +123!';
       }
       scoreEl.textContent = score;
       statusEl.textContent = statusMsg;
