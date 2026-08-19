@@ -119,6 +119,10 @@
     font-size:12px; letter-spacing:1px; color:var(--muted);
     text-transform:uppercase;
   }
+  #revline{
+    margin-top:10px; opacity:0.6; letter-spacing:1px;
+    font-size:11px; color:var(--muted); text-align:center;
+  }
 
   #ghost{
     position:fixed; top:0; left:0; pointer-events:none; z-index:50;
@@ -168,10 +172,7 @@
   </div>
 
   <div id="status">Drag a piece onto the grid</div>
-
-  <footer>Fixed orientations — no rotation. Full rows and columns of 10 clear together; overlapping cells only count once toward your score.
-    <div style="margin-top:10px; opacity:0.6; letter-spacing:1px;">rev: 2026-08-19 11:53 AM EDT</div>
-  </footer>
+  <div id="revline">rev: 2026-08-19 12:09 PM EDT</div>
 </div>
 
 <div id="ghost"></div>
@@ -582,4 +583,15 @@
   // page on this device, so it can never intercept future loads with stale cached content.
   if('serviceWorker' in navigator){
     navigator.serviceWorker.getRegistrations().then(regs=>{
-      regs.forEach(re
+      regs.forEach(reg=>reg.unregister());
+    }).catch(()=>{});
+    if(window.caches && caches.keys){
+      caches.keys().then(keys=>{
+        keys.forEach(key=>caches.delete(key));
+      }).catch(()=>{});
+    }
+  }
+})();
+</script>
+</body>
+</html>
