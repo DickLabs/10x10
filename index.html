@@ -17,7 +17,7 @@
     --paper:#12181f;
     --paper-2:#1a2229;
     --grid-line:#3b4b5a;
-    --accent:#4079ae;
+    --accent:#fffd82;
     --muted:#7c8894;
     --danger:#d6564a;
     --ok:#4caf7d;
@@ -66,7 +66,7 @@
     height:calc(var(--cell) * 10);
     background: var(--paper-2);
     border:2px solid var(--accent);
-    box-shadow: 0 0 0 6px var(--paper), 0 0 0 7px rgba(64,121,174,0.35), 0 12px 30px rgba(0,0,0,0.45);
+    box-shadow: 0 0 0 6px var(--paper), 0 0 0 7px rgba(255,253,130,0.35), 0 12px 30px rgba(0,0,0,0.45);
     border-radius:4px;
     overflow:hidden;
   }
@@ -172,7 +172,7 @@
   <div id="status">Drag a piece onto the grid</div>
 
   <footer>Fixed orientations — no rotation. Full rows and columns of 10 clear together; overlapping cells only count once toward your score.
-    <div style="margin-top:10px; opacity:0.6; letter-spacing:1px;">rev: 2026-08-19 01:20 AM EDT</div>
+    <div style="margin-top:10px; opacity:0.6; letter-spacing:1px;">rev: 2026-08-19 01:29 AM EDT</div>
   </footer>
 </div>
 
@@ -189,7 +189,7 @@
   const CELL = 32;
   const BOARD_N = 10;
 
-  const BLOCK_COLOR = '#4079ae';
+  const BLOCK_COLOR = '#fffd82';
 
   const SHAPES = [
     {name:'full',      cells:[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]]},
