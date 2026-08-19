@@ -64,23 +64,23 @@
     position:relative;
     width:calc(var(--cell) * 10);
     height:calc(var(--cell) * 10);
-    background:
-      repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px calc(var(--cell))),
-      repeating-linear-gradient(90deg, var(--grid-line) 0 1px, transparent 1px calc(var(--cell))),
-      var(--paper-2);
+    background: var(--paper-2);
     border:2px solid var(--accent);
     box-shadow: 0 0 0 6px var(--paper), 0 0 0 7px rgba(232,178,61,0.35), 0 12px 30px rgba(0,0,0,0.45);
     border-radius:4px;
+    overflow:hidden;
   }
   .cell{
     position:absolute;
     width:var(--cell); height:var(--cell);
     box-sizing:border-box;
-    border-radius:2px;
+    border-right:1px solid var(--grid-line);
+    border-bottom:1px solid var(--grid-line);
   }
   .cell.filled{
     background:var(--accent);
-    box-shadow: inset 0 0 0 2px rgba(0,0,0,0.25), 0 1px 0 rgba(255,255,255,0.08);
+    border-color:transparent;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12);
   }
   .cell.preview-ok{
     background:rgba(76,175,125,0.35) !important;
@@ -172,7 +172,7 @@
   <div id="status">Drag a piece onto the grid</div>
 
   <footer>Fixed orientations — no rotation. Full rows and columns of 10 clear together; overlapping cells only count once toward your score.
-    <div style="margin-top:10px; opacity:0.6; letter-spacing:1px;">rev: 2026-08-19 01:15 EDT</div>
+    <div style="margin-top:10px; opacity:0.6; letter-spacing:1px;">rev: 2026-08-19 02:15 EDT</div>
   </footer>
 </div>
 
@@ -462,7 +462,7 @@
   }
 
   function startDrag(e, index){
-    if(gameOver) return;
+    if(gameOver || drag) return;
     const shape = tray[index];
     if(!shape) return;
     const slot = document.getElementById('slot'+index);
@@ -481,7 +481,6 @@
       grabOffsetX: (e.clientX - gridRect.left)*scale,
       grabOffsetY: (e.clientY - gridRect.top)*scale,
       lift,
-      boardRect: boardEl.getBoundingClientRect(),
       lastRow: null, lastCol: null, lastValid:false,
       pendingX: e.clientX, pendingY: e.clientY,
       rafScheduled: false
@@ -495,6 +494,7 @@
 
     document.addEventListener('pointermove', onDragMove, {passive:true});
     document.addEventListener('pointerup', onDragEnd);
+    document.addEventListener('pointercancel', onDragEnd);
   }
 
   function positionGhost(x,y){
@@ -517,8 +517,9 @@
     const x = drag.pendingX, y = drag.pendingY;
     positionGhost(x,y);
 
-    const colStart = Math.round((x - drag.grabOffsetX - drag.boardRect.left)/CELL);
-    const rowStart = Math.round((y - drag.grabOffsetY - drag.lift - drag.boardRect.top)/CELL);
+    const boardRect = boardEl.getBoundingClientRect();
+    const colStart = Math.round((x - drag.grabOffsetX - boardRect.left)/CELL);
+    const rowStart = Math.round((y - drag.grabOffsetY - drag.lift - boardRect.top)/CELL);
 
     if(rowStart===drag.lastRow && colStart===drag.lastCol) return; // same cell as last frame — nothing to recompute
 
@@ -530,6 +531,7 @@
     if(!drag) return;
     document.removeEventListener('pointermove', onDragMove);
     document.removeEventListener('pointerup', onDragEnd);
+    document.removeEventListener('pointercancel', onDragEnd);
 
     const slot = document.getElementById('slot'+drag.index);
     slot.classList.remove('dragging-source');
