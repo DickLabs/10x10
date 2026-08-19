@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <title>TENGRID</title>
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="icon" href="icon-192.png">
+<link rel="icon" href="data:,">
 <meta name="theme-color" content="#12181f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -172,7 +170,7 @@
   <div id="status">Drag a piece onto the grid</div>
 
   <footer>Fixed orientations — no rotation. Full rows and columns of 10 clear together; overlapping cells only count once toward your score.
-    <div style="margin-top:10px; opacity:0.6; letter-spacing:1px;">rev: 2026-08-19 11:42 AM EDT</div>
+    <div style="margin-top:10px; opacity:0.6; letter-spacing:1px;">rev: 2026-08-19 11:53 AM EDT</div>
   </footer>
 </div>
 
@@ -580,8 +578,8 @@
   loadHighScore();
   loadWorstScore();
 
+  // Actively clean up any service worker registered by an earlier PWA build of this
+  // page on this device, so it can never intercept future loads with stale cached content.
   if('serviceWorker' in navigator){
-    window.addEventListener('load', ()=>{
-      navigator.serviceWorker.register('sw.js').catch(()=>{ /* offline caching unavailable */ });
-    });
-  }
+    navigator.serviceWorker.getRegistrations().then(regs=>{
+      regs.forEach(re
