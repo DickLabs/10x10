@@ -62,13 +62,13 @@
   }
   #board{
     position:relative;
+    box-sizing:content-box;
     width:calc(var(--cell) * 10);
     height:calc(var(--cell) * 10);
     background: var(--paper-2);
-    border:2px solid var(--accent);
-    box-shadow: 0 0 0 6px var(--paper), 0 0 0 7px rgba(255,253,130,0.35), 0 12px 30px rgba(0,0,0,0.45);
+    border:2px solid var(--grid-line);
+    box-shadow: 0 0 0 6px var(--paper), 0 12px 30px rgba(0,0,0,0.45);
     border-radius:4px;
-    overflow:hidden;
   }
   .cell{
     position:absolute;
@@ -172,7 +172,7 @@
   <div id="status">Drag a piece onto the grid</div>
 
   <footer>Fixed orientations — no rotation. Full rows and columns of 10 clear together; overlapping cells only count once toward your score.
-    <div style="margin-top:10px; opacity:0.6; letter-spacing:1px;">rev: 2026-08-19 01:29 AM EDT</div>
+    <div style="margin-top:10px; opacity:0.6; letter-spacing:1px;">rev: 2026-08-19 01:41 AM EDT</div>
   </footer>
 </div>
 
