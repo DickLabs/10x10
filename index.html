@@ -327,6 +327,10 @@
       board[rowStart+dr][colStart+dc] = shape.color;
     });
 
+    // points for successfully placing a piece: one point per cell it occupies
+    score += shape.cells.length;
+    scoreEl.textContent = score;
+
     // find full rows/cols
     const cellsToClear = new Set();
     for(let r=0;r<BOARD_N;r++){
@@ -350,8 +354,13 @@
         boardCellEls[r][c].classList.add('clearing');
       });
       score += cellsToClear.size;
+      let statusMsg = cellsToClear.size+' blocks cleared';
+      if(cellsToClear.size>=40){
+        score += 100;
+        statusMsg += ' • +100 bonus!';
+      }
       scoreEl.textContent = score;
-      statusEl.textContent = cellsToClear.size+' blocks cleared';
+      statusEl.textContent = statusMsg;
       maybeSaveHighScore();
       setTimeout(()=>{
         cellsToClear.forEach(key=>{
@@ -363,6 +372,7 @@
       }, 320);
     } else {
       statusEl.textContent = 'Placed';
+      maybeSaveHighScore();
     }
 
     tray[pieceIndex] = null;
