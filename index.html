@@ -172,7 +172,7 @@
   <div id="status">Drag a piece onto the grid</div>
 
   <footer>Fixed orientations — no rotation. Full rows and columns of 10 clear together; overlapping cells only count once toward your score.
-    <div style="margin-top:10px; opacity:0.6; letter-spacing:1px;">rev: 2026-08-19 01:41 AM EDT</div>
+    <div style="margin-top:10px; opacity:0.6; letter-spacing:1px;">rev: 2026-08-19 11:42 AM EDT</div>
   </footer>
 </div>
 
@@ -193,6 +193,7 @@
 
   const SHAPES = [
     {name:'full',      cells:[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]]},
+    {name:'square2',   cells:[[0,0],[0,1],[1,0],[1,1]]},
     {name:'bigL-BL',   cells:[[0,0],[1,0],[2,0],[2,1],[2,2]]},
     {name:'bigL-BR',   cells:[[0,2],[1,2],[2,0],[2,1],[2,2]]},
     {name:'bigL-TR',   cells:[[0,0],[0,1],[0,2],[1,2],[2,2]]},
@@ -584,7 +585,3 @@
       navigator.serviceWorker.register('sw.js').catch(()=>{ /* offline caching unavailable */ });
     });
   }
-})();
-</script>
-</body>
-</html>
