@@ -572,4 +572,82 @@
 
     if(rowStart===drag.lastRow && colStart===drag.lastCol) return; // same cell as last frame — nothing to recompute
 
-    drag.last
+    drag.lastRow = rowStart; drag.lastCol = colStart;
+    if(SHOW_PLACEMENT_PREVIEW){
+      drag.lastValid = showPreview(drag.shape, rowStart, colStart);
+    } else {
+      drag.lastValid = isValidPlacement(drag.shape, rowStart, colStart);
+    }
+  }
+
+  function onDragEnd(e){
+    if(!drag) return;
+    document.removeEventListener('pointermove', onDragMove);
+    document.removeEventListener('pointerup', onDragEnd);
+    document.removeEventListener('pointercancel', onDragEnd);
+
+    const slot = document.getElementById('slot'+drag.index);
+    slot.classList.remove('dragging-source');
+    ghostEl.style.display='none';
+    clearPreview();
+
+    if(drag.lastValid){
+      commitPlacement(drag.index, drag.shape, drag.lastRow, drag.lastCol);
+    } else {
+      statusEl.textContent = 'Can\'t place there';
+    }
+    drag = null;
+  }
+
+  function attachTrayHandlers(){
+    for(let i=0;i<3;i++){
+      const slot = document.getElementById('slot'+i);
+      slot.addEventListener('pointerdown', (e)=>{
+        e.preventDefault();
+        startDrag(e, i);
+      });
+    }
+  }
+
+  function restart(){
+    board = Array.from({length:BOARD_N}, ()=>Array(BOARD_N).fill(null));
+    score = 0;
+    scoreEl.textContent = '0';
+    bestEl.textContent = highScore;
+    worstEl.textContent = worstScore===null ? '—' : worstScore;
+    totalPlacements = 0;
+    clearingPlacements = 0;
+    lethEl.textContent = '0%';
+    tray = [randShape(), randShape(), randShape()];
+    gameOver = false;
+    overlayEl.classList.remove('show');
+    statusEl.textContent = 'Drag a piece onto the grid';
+    renderBoard();
+    renderTray();
+  }
+
+  document.getElementById('restartBtn').addEventListener('click', restart);
+
+  initBoardDom();
+  renderBoard();
+  renderTray();
+  attachTrayHandlers();
+  loadHighScore();
+  loadWorstScore();
+
+  // Actively clean up any service worker registered by an earlier PWA build of this
+  // page on this device, so it can never intercept future loads with stale cached content.
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(regs=>{
+      regs.forEach(reg=>reg.unregister());
+    }).catch(()=>{});
+    if(window.caches && caches.keys){
+      caches.keys().then(keys=>{
+        keys.forEach(key=>caches.delete(key));
+      }).catch(()=>{});
+    }
+  }
+})();
+</script>
+</body>
+</html>
