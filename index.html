@@ -184,7 +184,7 @@
   </div>
 
   <div id="status">Drag a piece onto the grid</div>
-  <div id="revline">rev: 2026-08-22 07:33 PM EDT</div>
+  <div id="revline">rev: 2026-08-22 07:48 PM EDT</div>
 </div>
 
 <div id="ghost"></div>
@@ -373,14 +373,14 @@
 
     renderBoard();
 
-    function finishTurn(){
-      tray[pieceIndex] = null;
-      if(tray.every(s=>s===null)){
-        tray = [randShape(), randShape(), randShape()];
-      }
-      renderTray();
-      checkGameOver();
+    // Remove the used piece from the tray immediately — this must not wait for
+    // the clear animation, or the piece appears to linger/reappear in its slot
+    // while the board is still animating the clear.
+    tray[pieceIndex] = null;
+    if(tray.every(s=>s===null)){
+      tray = [randShape(), randShape(), randShape()];
     }
+    renderTray();
 
     if(cellsToClear.size>0){
       // will this clear leave the entire board empty?
@@ -418,12 +418,12 @@
           boardCellEls[r][c].classList.remove('clearing');
         });
         renderBoard();
-        finishTurn(); // board now reflects the clear — safe to check for game over
+        checkGameOver(); // board now reflects the clear — safe to check for game over
       }, 320);
     } else {
       statusEl.textContent = 'Placed';
       maybeSaveHighScore();
-      finishTurn();
+      checkGameOver();
     }
   }
 
