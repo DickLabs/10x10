@@ -52,12 +52,15 @@
   }
   h1 span{color:var(--accent);}
   .scorebox{
-    text-align:right; font-size:12px; color:var(--muted);
+    text-align:center; font-size:14px; color:var(--muted);
     letter-spacing:2px; text-transform:uppercase;
   }
   .scorebox .num{
-    display:block; font-size:28px; color:var(--accent);
+    display:block; font-size:25px; color:var(--accent);
     font-family: Georgia, serif; letter-spacing:0px; line-height:1.1;
+  }
+  .scorebox-current .num{
+    font-size:30px;
   }
   #board{
     position:relative;
@@ -165,11 +168,11 @@
   <header>
     <h1>TEN<span>GRID</span></h1>
     <div style="display:flex; justify-content:space-between; width:100%;">
-      <div class="scorebox">SCORE<span class="num" id="scoreNum">0</span></div>
       <div class="scorebox">BEST<span class="num" id="bestNum">0</span></div>
       <div class="scorebox">WORST<span class="num" id="worstNum">—</span></div>
       <div class="scorebox">LETHALITY<span class="num" id="lethNum">0%</span></div>
     </div>
+    <div class="scorebox scorebox-current">SCORE<span class="num" id="scoreNum">0</span></div>
   </header>
 
   <div id="board"></div>
@@ -181,7 +184,7 @@
   </div>
 
   <div id="status">Drag a piece onto the grid</div>
-  <div id="revline">rev: 2026-08-22 06:48 PM EDT</div>
+  <div id="revline">rev: 2026-08-22 07:33 PM EDT</div>
 </div>
 
 <div id="ghost"></div>
