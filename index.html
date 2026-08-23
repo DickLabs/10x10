@@ -186,7 +186,7 @@
   </div>
 
   <div id="status">Drag a piece onto the grid</div>
-  <div id="revline">rev: 2026-08-22 08:01 PM EDT</div>
+  <div id="revline">rev: 2026-08-23 07:13 PM EDT</div>
 </div>
 
 <div id="ghost"></div>
@@ -205,6 +205,11 @@
   // It costs a little extra DOM work per drag frame, which can cause lag on older
   // devices — set to false to skip it (placement/scoring logic is unaffected either way).
   const SHOW_PLACEMENT_PREVIEW = false;
+
+  // How much further the piece moves than your finger actually does, scaled from
+  // the drag's starting point. 1 = normal 1:1 tracking. Useful for reaching corners
+  // of the board with a short thumb reach without moving the whole hand.
+  const DRAG_AMPLIFY = 1.25;
   const BOARD_N = 10;
 
   const BLOCK_COLOR = '#fffd82';
@@ -561,6 +566,8 @@
       grabOffsetX: (e.clientX - gridRect.left)*scale,
       grabOffsetY: (e.clientY - gridRect.top)*scale,
       lift,
+      startClientX: e.clientX,
+      startClientY: e.clientY,
       lastRow: null, lastCol: null, lastValid:false,
       pendingX: e.clientX, pendingY: e.clientY,
       rafScheduled: false
@@ -594,7 +601,10 @@
   function processDragFrame(){
     if(!drag) return;
     drag.rafScheduled = false;
-    const x = drag.pendingX, y = drag.pendingY;
+
+    // amplify motion relative to the drag's starting point, not the raw pointer position
+    const x = drag.startClientX + (drag.pendingX - drag.startClientX) * DRAG_AMPLIFY;
+    const y = drag.startClientY + (drag.pendingY - drag.startClientY) * DRAG_AMPLIFY;
     positionGhost(x,y);
 
     const boardRect = boardEl.getBoundingClientRect();
