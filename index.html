@@ -42,6 +42,7 @@
     min-height:100%;
   }
   header{
+    position:relative;
     display:flex; flex-direction:column; gap:8px;
     width:100%; max-width:420px; margin-bottom:18px;
   }
@@ -49,8 +50,18 @@
     font-family: Georgia, 'Times New Roman', serif;
     font-weight:700; letter-spacing:6px;
     font-size:26px; margin:0; color:var(--ink);
+    position:relative;
   }
   h1 span{color:var(--accent);}
+  #revTrigger{ cursor:pointer; }
+  #revPopup{
+    display:none;
+    position:absolute; top:100%; left:0; margin-top:6px;
+    background:var(--paper-2); border:1px solid var(--grid-line); border-radius:4px;
+    padding:6px 10px; font-size:11px; letter-spacing:1px; color:var(--muted);
+    white-space:nowrap; z-index:20;
+  }
+  #revPopup.show{ display:block; }
   .scorebox{
     text-align:center; font-size:14px; color:var(--muted);
     letter-spacing:2px; text-transform:uppercase;
@@ -167,7 +178,7 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>TEN<span>GRID</span></h1>
+    <h1>TEN<span>G<span id="revTrigger">R</span>ID</span><div id="revPopup"></div></h1>
     <div style="display:flex; justify-content:space-between; width:100%;">
       <div class="scorebox">BEST<span class="num" id="bestNum">0</span></div>
       <div class="scorebox">WORST<span class="num" id="worstNum">—</span></div>
@@ -186,7 +197,7 @@
   </div>
 
   <div id="status">Drag a piece onto the grid</div>
-  <div id="revline">rev: 2026-08-23 07:33 PM EDT</div>
+  <div id="revline">rev: 2026-08-23 07:41 PM EDT</div>
 </div>
 
 <div id="ghost"></div>
@@ -677,6 +688,24 @@
   loadHighScore();
   loadWorstScore();
   loadPeakBlocks();
+
+  // R in the title reveals the current revision code — mirrors the revline
+  // text at the bottom of the page so there's only one place to update it.
+  (function(){
+    const trigger = document.getElementById('revTrigger');
+    const popup = document.getElementById('revPopup');
+    const revline = document.getElementById('revline');
+    popup.textContent = revline.textContent;
+    trigger.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      popup.classList.toggle('show');
+    });
+    document.addEventListener('click', (e)=>{
+      if(popup.classList.contains('show') && !popup.contains(e.target) && e.target!==trigger){
+        popup.classList.remove('show');
+      }
+    });
+  })();
 
   // Actively clean up any service worker registered by an earlier PWA build of this
   // page on this device, so it can never intercept future loads with stale cached content.
