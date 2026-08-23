@@ -58,6 +58,7 @@
   .scorebox .num{
     display:block; font-size:25px; color:var(--accent);
     font-family: Georgia, serif; letter-spacing:0px; line-height:1.1;
+    font-variant-numeric: lining-nums;
   }
   .scorebox-current .num{
     font-size:30px;
@@ -171,6 +172,7 @@
       <div class="scorebox">BEST<span class="num" id="bestNum">0</span></div>
       <div class="scorebox">WORST<span class="num" id="worstNum">—</span></div>
       <div class="scorebox">LETHALITY<span class="num" id="lethNum">0%</span></div>
+      <div class="scorebox">PEAK<span class="num" id="peakNum">0</span></div>
     </div>
     <div class="scorebox scorebox-current">SCORE<span class="num" id="scoreNum">0</span></div>
   </header>
@@ -184,7 +186,7 @@
   </div>
 
   <div id="status">Drag a piece onto the grid</div>
-  <div id="revline">rev: 2026-08-22 07:48 PM EDT</div>
+  <div id="revline">rev: 2026-08-22 08:01 PM EDT</div>
 </div>
 
 <div id="ghost"></div>
@@ -243,6 +245,7 @@
   let score = 0;
   let highScore = 0;
   let worstScore = null;
+  let peakBlocks = 0;
   let totalPlacements = 0;
   let clearingPlacements = 0;
   let tray = [randShape(), randShape(), randShape()];
@@ -252,6 +255,7 @@
   const scoreEl = document.getElementById('scoreNum');
   const bestEl = document.getElementById('bestNum');
   const worstEl = document.getElementById('worstNum');
+  const peakEl = document.getElementById('peakNum');
   const lethEl = document.getElementById('lethNum');
   const statusEl = document.getElementById('status');
   const ghostEl = document.getElementById('ghost');
@@ -352,6 +356,11 @@
     scoreEl.textContent = score;
 
     totalPlacements++;
+
+    // peak occupancy is measured right after the piece lands, before any clear removes cells
+    let filledCount = 0;
+    for(let r=0;r<BOARD_N;r++) for(let c=0;c<BOARD_N;c++) if(board[r][c]) filledCount++;
+    maybeSavePeakBlocks(filledCount);
 
     // find full rows/cols
     const cellsToClear = new Set();
@@ -472,6 +481,25 @@
       worstEl.textContent = worstScore;
       try{ localStorage.setItem('tengrid_worstscore', String(worstScore)); }catch(e){}
       try{ setCookie('tengrid_worstscore', String(worstScore)); }catch(e){}
+    }
+  }
+
+  async function loadPeakBlocks(){
+    try{
+      const v = localStorage.getItem('tengrid_peakblocks') || getCookie('tengrid_peakblocks');
+      peakBlocks = v ? parseInt(v,10)||0 : 0;
+    }catch(e){
+      peakBlocks = parseInt(getCookie('tengrid_peakblocks'),10) || 0;
+    }
+    peakEl.textContent = peakBlocks;
+  }
+
+  async function maybeSavePeakBlocks(currentFilled){
+    if(currentFilled>peakBlocks){
+      peakBlocks = currentFilled;
+      peakEl.textContent = peakBlocks;
+      try{ localStorage.setItem('tengrid_peakblocks', String(peakBlocks)); }catch(e){}
+      try{ setCookie('tengrid_peakblocks', String(peakBlocks)); }catch(e){}
     }
   }
 
@@ -618,6 +646,7 @@
     scoreEl.textContent = '0';
     bestEl.textContent = highScore;
     worstEl.textContent = worstScore===null ? '—' : worstScore;
+    peakEl.textContent = peakBlocks;
     totalPlacements = 0;
     clearingPlacements = 0;
     lethEl.textContent = '0%';
@@ -637,6 +666,7 @@
   attachTrayHandlers();
   loadHighScore();
   loadWorstScore();
+  loadPeakBlocks();
 
   // Actively clean up any service worker registered by an earlier PWA build of this
   // page on this device, so it can never intercept future loads with stale cached content.
