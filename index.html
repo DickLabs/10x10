@@ -33,9 +33,6 @@
     font-family: 'Courier New', ui-monospace, monospace;
     -webkit-user-select:none; user-select:none;
   }
-  body.dragging{
-    touch-action:none;
-  }
   .wrap{
     display:flex; flex-direction:column; align-items:center;
     padding:24px 16px 60px;
@@ -130,6 +127,7 @@
     display:flex; align-items:center; justify-content:center;
     position:relative;
     cursor:grab;
+    touch-action:none;
   }
   .slot.empty{ opacity:0.25; cursor:default; }
   .slot.dragging-source{ opacity:0; }
@@ -201,7 +199,7 @@
   </div>
 
   <div id="status">Drag a piece onto the grid</div>
-  <div id="revline">rev: 2026-08-23 07:53 PM EDT</div>
+  <div id="revline">rev: 2026-08-23 08:23 PM EDT</div>
 </div>
 
 <div id="ghost"></div>
@@ -589,7 +587,6 @@
     };
 
     slot.classList.add('dragging-source');
-    document.body.classList.add('dragging');
     renderPieceGrid(ghostEl, shape, CELL);
     ghostEl.style.display='block';
     positionGhost(e.clientX, e.clientY);
@@ -645,7 +642,6 @@
 
     const slot = document.getElementById('slot'+drag.index);
     slot.classList.remove('dragging-source');
-    document.body.classList.remove('dragging');
     ghostEl.style.display='none';
     clearPreview();
 
